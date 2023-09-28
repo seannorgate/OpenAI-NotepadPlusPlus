@@ -38,7 +38,6 @@
             // 
             // textBox1
             // 
-            this.textBox1.AcceptsReturn = true;
             this.textBox1.AllowDrop = true;
             this.textBox1.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.textBox1.CausesValidation = false;
@@ -63,7 +62,7 @@
             this.refactorButton.Location = new System.Drawing.Point(15, 263);
             this.refactorButton.Name = "refactorButton";
             this.refactorButton.Size = new System.Drawing.Size(140, 23);
-            this.refactorButton.TabIndex = 2;
+            this.refactorButton.TabIndex = 1;
             this.refactorButton.Text = "Refactor";
             this.refactorButton.UseVisualStyleBackColor = true;
             this.refactorButton.Click += new System.EventHandler(this.refactorButton_Click);
@@ -97,6 +96,7 @@
             this.textGPTResponse.Location = new System.Drawing.Point(12, 319);
             this.textGPTResponse.Multiline = true;
             this.textGPTResponse.Name = "textGPTResponse";
+            this.textGPTResponse.ReadOnly = true;
             this.textGPTResponse.Size = new System.Drawing.Size(286, 231);
             this.textGPTResponse.TabIndex = 0;
             // 
@@ -111,8 +111,10 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textGPTResponse);
             this.Controls.Add(this.textBox1);
+            this.KeyPreview = true;
             this.Name = "frmMyDlg";
             this.Text = "frmMyDlg";
+            this.Load += new System.EventHandler(this.frmMyDlg_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
