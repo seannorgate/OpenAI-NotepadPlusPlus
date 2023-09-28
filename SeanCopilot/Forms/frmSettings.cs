@@ -20,6 +20,7 @@ namespace Kbg.NppPluginNET
         public frmSettings()
         {
             InitializeComponent();
+            LoadInstructions();
         }
 
         private void frmSettings_Load(object sender, EventArgs e)
