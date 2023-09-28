@@ -1,17 +1,5 @@
-﻿using Kbg.NppPluginNET;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using System.Windows.Forms;
-using Kbg.NppPluginNET.PluginInfrastructure;
-using System.Net;
-using System.Web.Script.Serialization;
 
 namespace Kbg.NppPluginNET
 {
@@ -21,47 +9,39 @@ namespace Kbg.NppPluginNET
         {
             InitializeComponent();
             LoadInstructions();
+            LoadConfigurations();
         }
 
-        private void frmSettings_Load(object sender, EventArgs e)
+        private void btnInstructionSave_Click(object sender, EventArgs e)
+        {
+            Main.SetInstructions(txtInstructions.Text);
+        }
+
+        private void btnInstructionReset_Click(object sender, EventArgs e)
         {
             LoadInstructions();
+        }
+
+        private void btnConfigurationSave_Click(object sender, EventArgs e)
+        {
+            Main.configManager.SetConfigValue("api_key", txtApiKey.Text);
+            Main.configManager.SetConfigValue("gpt_model", txtGptModel.Text);
+        }
+
+        private void btnConfigurationReset_Click(object sender, EventArgs e)
+        {
+            LoadConfigurations();
+        }
+
+        private void LoadConfigurations()
+        {
+            txtApiKey.Text = Main.configManager.GetConfigValue("api_key", placeholders: false);
+            txtGptModel.Text = Main.configManager.GetConfigValue("gpt_model", placeholders: false);
         }
 
         private void LoadInstructions()
         {
-            if (File.Exists(Main.INSTRUCTION_FILEPATH))
-            {
-                try
-                {
-                    txtInstructions.Text = File.ReadAllText(Main.INSTRUCTION_FILEPATH);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"An error occurred while reading the file: {ex.Message}");
-                }
-            }
-            else
-            {
-                MessageBox.Show("File instructions.ini does not exist.");
-            }
-        }
-
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                File.WriteAllText(Main.INSTRUCTION_FILEPATH, txtInstructions.Text);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"An error occurred while saving the file: {ex.Message}");
-            }
-        }
-
-        private void btnReset_Click(object sender, EventArgs e)
-        {
-            LoadInstructions();
+            txtInstructions.Text = Main.GetInstructions();
         }
     }
 }

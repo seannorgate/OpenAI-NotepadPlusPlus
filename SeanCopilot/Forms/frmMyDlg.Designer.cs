@@ -1,4 +1,6 @@
-﻿namespace Kbg.NppPluginNET
+﻿using System.Windows.Forms;
+
+namespace Kbg.NppPluginNET
 {
     partial class frmMyDlg
     {
@@ -32,7 +34,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.refactorButton = new System.Windows.Forms.Button();
             this.clearButton = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
+            this.lblResponse = new System.Windows.Forms.Label();
             this.textGPTResponse = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
@@ -45,7 +47,7 @@
             this.textBox1.Location = new System.Drawing.Point(12, 26);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(286, 231);
+            this.textBox1.Size = new System.Drawing.Size(300, 231);
             this.textBox1.TabIndex = 0;
             // 
             // label1
@@ -69,7 +71,7 @@
             // 
             // clearButton
             // 
-            this.clearButton.Location = new System.Drawing.Point(155, 263);
+            this.clearButton.Location = new System.Drawing.Point(169, 263);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(140, 23);
             this.clearButton.TabIndex = 2;
@@ -77,18 +79,18 @@
             this.clearButton.UseVisualStyleBackColor = true;
             this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
             // 
-            // label2
+            // lblResponse
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(15, 303);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(58, 13);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Response:";
+            this.lblResponse.AutoSize = true;
+            this.lblResponse.Location = new System.Drawing.Point(15, 303);
+            this.lblResponse.Name = "lblResponse";
+            this.lblResponse.Size = new System.Drawing.Size(58, 13);
+            this.lblResponse.TabIndex = 3;
+            this.lblResponse.Text = "Response:";
+            this.lblResponse.Visible = false;
             // 
             // textGPTResponse
             // 
-            this.textGPTResponse.AcceptsReturn = true;
             this.textGPTResponse.AllowDrop = true;
             this.textGPTResponse.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.textGPTResponse.CausesValidation = false;
@@ -97,15 +99,16 @@
             this.textGPTResponse.Multiline = true;
             this.textGPTResponse.Name = "textGPTResponse";
             this.textGPTResponse.ReadOnly = true;
-            this.textGPTResponse.Size = new System.Drawing.Size(286, 231);
+            this.textGPTResponse.Size = new System.Drawing.Size(300, 231);
             this.textGPTResponse.TabIndex = 0;
+            this.textGPTResponse.Visible = false;
             // 
             // frmMyDlg
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(310, 557);
-            this.Controls.Add(this.label2);
+            this.ClientSize = new System.Drawing.Size(333, 557);
+            this.Controls.Add(this.lblResponse);
             this.Controls.Add(this.clearButton);
             this.Controls.Add(this.refactorButton);
             this.Controls.Add(this.label1);
@@ -114,7 +117,8 @@
             this.KeyPreview = true;
             this.Name = "frmMyDlg";
             this.Text = "frmMyDlg";
-            this.Load += new System.EventHandler(this.frmMyDlg_Load);
+            this.GotFocus += new System.EventHandler(this.frmMyDlg_GetFocus);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmMyDlg_KeyDown);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -126,7 +130,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button refactorButton;
         private System.Windows.Forms.Button clearButton;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lblResponse;
         private System.Windows.Forms.TextBox textGPTResponse;
     }
 }

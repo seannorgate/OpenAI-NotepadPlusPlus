@@ -12,7 +12,7 @@ namespace Kbg.NppPluginNET
     class Main
     {
         internal const string PluginName = "SeanCopilot";
-        public static string INSTRUCTION_FILEPATH = string.Empty;
+        public static ConfigManager configManager = null;
         static string iniFilePath = null;
         static bool someSetting = false;
         static frmMyDlg frmMyDlg = null;
@@ -22,6 +22,7 @@ namespace Kbg.NppPluginNET
         static Bitmap tbBmp = SeanCopilot.Properties.Resources.star;
         static Bitmap tbBmp_tbTab = SeanCopilot.Properties.Resources.star_bmp;
         static Icon tbIcon = null;
+
 
         public static void OnNotification(ScNotification notification)
         {  
@@ -38,8 +39,9 @@ namespace Kbg.NppPluginNET
         internal static void CommandMenuInit()
         {
             StringBuilder sbIniFilePath = new StringBuilder(Win32.MAX_PATH);
-            INSTRUCTION_FILEPATH = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"plugins/{PluginName}/instruction.ini");
-            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint) NppMsg.NPPM_GETPLUGINSCONFIGDIR, Win32.MAX_PATH, sbIniFilePath);
+            GetConfigurations();
+
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETPLUGINSCONFIGDIR, Win32.MAX_PATH, sbIniFilePath);
             iniFilePath = sbIniFilePath.ToString();
             if (!Directory.Exists(iniFilePath)) Directory.CreateDirectory(iniFilePath);
             iniFilePath = Path.Combine(iniFilePath, PluginName + ".ini");
@@ -48,6 +50,43 @@ namespace Kbg.NppPluginNET
             PluginBase.SetCommand(0, "Sean's Menu Command", myMenuFunction);
             PluginBase.SetCommand(1, "Open Copilot", myDockableDialog, new ShortcutKey(true, true, false, Keys.Space)); idMyDlg = 1;
             PluginBase.SetCommand(2, "Settings", SettingsDialog); idSettingsDlg = 2;
+        }
+
+        private static void GetConfigurations()
+        {
+            configManager = new ConfigManager(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"plugins/{PluginName}/{PluginName}.config"));
+        }
+
+        public static string GetInstructions()
+        {
+            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configManager.GetConfigValue("instructions_path"));
+            if (File.Exists(filePath))
+            {
+                try
+                {
+                    return File.ReadAllText(filePath);
+                }
+                catch (Exception ex)
+                {
+                    return $"An error occurred while reading the file: {ex.Message}";
+                }
+            }
+            else
+            {
+                return $"File {filePath} does not exist.";
+            }
+        }
+
+        public static void SetInstructions(string newInstruction)
+        {
+            try
+            {
+                File.WriteAllText(Main.configManager.GetConfigValue("instructions_path"), newInstruction);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while saving the file: {ex.Message}");
+            }
         }
 
         internal static void SetToolBarIcon()
@@ -71,7 +110,7 @@ namespace Kbg.NppPluginNET
         {
             var scintilla = new ScintillaGateway(PluginBase.GetCurrentScintilla());
             if (scintilla.GetSelectionLength() != 0)
-                MessageBox.Show("Hello Sean, you are super cool!");
+                MessageBox.Show("Hello Sean, you are super cool! model is " + configManager.GetConfigValue("gpt_model"));
             else
                 MessageBox.Show(scintilla.GetSelText());
         }

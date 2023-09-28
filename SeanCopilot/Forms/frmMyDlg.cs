@@ -11,33 +11,41 @@ namespace Kbg.NppPluginNET
 
     public partial class frmMyDlg : Form
     {
-        private string systemInstruction;
-
         public frmMyDlg()
         {
             InitializeComponent();
-
-            try
-            {
-                if (File.Exists(Main.INSTRUCTION_FILEPATH))
-                {
-                    systemInstruction = File.ReadAllText(Main.INSTRUCTION_FILEPATH);
-                }
-                else
-                {
-                    MessageBox.Show("INI file not found in " + Main.INSTRUCTION_FILEPATH);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("An error occurred: " + ex.Message);
-            }
+            CheckAPIKey();
         }
 
-        private void frmMyDlg_Load(object sender, EventArgs e)
+        private void CheckAPIKey()
         {
-            // Attach the KeyDown event to the form
-            this.KeyDown += new KeyEventHandler(frmMyDlg_KeyDown);
+            bool enabledForm = Main.configManager.GetConfigValue("api_key").Length > 0;
+            string noApiKeyString = "No API key found!";
+
+            if (!enabledForm)
+            {
+                textGPTResponse.Text = string.Empty;
+                textGPTResponse.Hide();
+                lblResponse.Hide();
+                textBox1.Text = noApiKeyString;
+            }
+            else
+            {
+                if(textBox1.Text == noApiKeyString)
+                {
+                    textBox1.Text = string.Empty;
+                }
+
+                if (textGPTResponse.Text.Length > 0)
+                {
+                    lblResponse.Show();
+                    textGPTResponse.Show();
+                }
+            }
+
+            textBox1.Enabled = enabledForm;
+            refactorButton.Enabled = enabledForm;
+            clearButton.Enabled = enabledForm;
         }
 
         private void frmMyDlg_KeyDown(object sender, KeyEventArgs e)
@@ -57,18 +65,18 @@ namespace Kbg.NppPluginNET
             var request = (HttpWebRequest)WebRequest.Create("https://api.openai.com/v1/chat/completions");
             request.Method = "POST";
             request.ContentType = "application/json";
-            request.Headers.Add("Authorization", "Bearer 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");
+            request.Headers.Add("Authorization", "Bearer " + Main.configManager.GetConfigValue("api_key"));
             request.UseDefaultCredentials = false;
 
             var messages = new List<Dictionary<string, string>>
             {
-                new Dictionary<string, string> { { "role", "system" }, { "content", systemInstruction } },
+                new Dictionary<string, string> { { "role", "system" }, { "content", Main.GetInstructions() } },
                 new Dictionary<string, string> { { "role", "user" }, { "content", prompt } }
             };
 
             var payload = new Dictionary<string, object>
             {
-                { "model", "gpt-3.5-turbo" },
+                { "model", Main.configManager.GetConfigValue("gpt_model") },
                 { "messages", messages }
             };
 
@@ -111,12 +119,16 @@ namespace Kbg.NppPluginNET
 
         private void clearButton_Click(object sender, EventArgs e)
         {
-            textBox1.Text = "";
-            textGPTResponse.Text = systemInstruction;
+            textBox1.Text = string.Empty;
+            textGPTResponse.Text = string.Empty;
+            lblResponse.Hide();
+            textGPTResponse.Hide();
         }
 
         private void refactorButton_Click(object sender, EventArgs e)
         {
+            textGPTResponse.Text = string.Empty;
+
             var scintilla = new ScintillaGateway(PluginBase.GetCurrentScintilla());
             string prompt = textBox1.Text + "\r\n" + scintilla.GetSelText();
 
@@ -124,8 +136,15 @@ namespace Kbg.NppPluginNET
 
             if(response[0].Length > 0)
                 scintilla.ReplaceSel(response[0]);
-            
+
+            lblResponse.Show();
+            textGPTResponse.Show();
             textGPTResponse.Text = response[1];
+        }
+
+        private void frmMyDlg_GetFocus(object sender, EventArgs e)
+        {
+            CheckAPIKey();
         }
     }
 }
