@@ -5,6 +5,7 @@ using Kbg.NppPluginNET.PluginInfrastructure;
 using System.Net;
 using System.Web.Script.Serialization;
 using System.IO;
+using System.Linq;
 
 namespace Kbg.NppPluginNET
 {
@@ -15,6 +16,17 @@ namespace Kbg.NppPluginNET
         {
             InitializeComponent();
             CheckAPIKey();
+        }
+
+        private void frmMyDlg_Load(object sender, EventArgs e)
+        {
+            textBox1.Focus();
+        }
+
+        private void frmMyDlg_GetFocus(object sender, EventArgs e)
+        {
+            CheckAPIKey();
+            textBox1.Focus();
         }
 
         private void CheckAPIKey()
@@ -129,22 +141,54 @@ namespace Kbg.NppPluginNET
         {
             textGPTResponse.Text = string.Empty;
 
+            // get selected text
             var scintilla = new ScintillaGateway(PluginBase.GetCurrentScintilla());
-            string prompt = textBox1.Text + "\r\n" + scintilla.GetSelText();
+            string selectionText = scintilla.GetSelText();
+            string whitespace = ExtractWhitespace(selectionText);
 
+            // make the GPT call
+            string prompt = textBox1.Text + "\r\n" + selectionText;
             string[] response = GetGPTResponse(prompt);
 
-            if(response[0].Length > 0)
-                scintilla.ReplaceSel(response[0]);
+            // replace the selected text if necessary
+            if (response[0].Length > 0)
+                scintilla.ReplaceSel(InsertWhitespace(response[0], whitespace));
 
+            // updated the UI
             lblResponse.Show();
             textGPTResponse.Show();
             textGPTResponse.Text = response[1];
         }
 
-        private void frmMyDlg_GetFocus(object sender, EventArgs e)
+        private static string InsertWhitespace(string responseCode, string whitespace)
         {
-            CheckAPIKey();
+            string newCode = responseCode;
+            if (!String.IsNullOrEmpty(whitespace))
+            {
+                newCode = String.Join("\n", newCode.Split('\n').Select(line => whitespace + line));
+            }
+
+            return newCode;
+        }
+
+        public string ExtractWhitespace(string selectionText)
+        {
+            string whitespace = null;
+            if (selectionText.Contains("\n"))
+            {
+                var lines = selectionText.Split('\n');
+                foreach (var line in lines)
+                {
+                    if (string.IsNullOrWhiteSpace(line)) continue;
+                    whitespace = line.Length > 0 ? line.Substring(0, line.Length - line.TrimStart().Length) : null;
+                    break;
+                }
+            }
+            else
+            {
+                whitespace = selectionText.Length > 0 ? selectionText.Substring(0, selectionText.Length - selectionText.TrimStart().Length) : null;
+            }
+            return whitespace;
         }
     }
 }

@@ -55,9 +55,9 @@ namespace Kbg.NppPluginNET
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 10);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(107, 13);
+            this.label1.Size = new System.Drawing.Size(100, 13);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Refactor instructions:";
+            this.label1.Text = "Request for Copilot:";
             // 
             // refactorButton
             // 
@@ -65,7 +65,7 @@ namespace Kbg.NppPluginNET
             this.refactorButton.Name = "refactorButton";
             this.refactorButton.Size = new System.Drawing.Size(140, 23);
             this.refactorButton.TabIndex = 1;
-            this.refactorButton.Text = "Refactor";
+            this.refactorButton.Text = "Run";
             this.refactorButton.UseVisualStyleBackColor = true;
             this.refactorButton.Click += new System.EventHandler(this.refactorButton_Click);
             // 
@@ -84,9 +84,9 @@ namespace Kbg.NppPluginNET
             this.lblResponse.AutoSize = true;
             this.lblResponse.Location = new System.Drawing.Point(15, 303);
             this.lblResponse.Name = "lblResponse";
-            this.lblResponse.Size = new System.Drawing.Size(58, 13);
+            this.lblResponse.Size = new System.Drawing.Size(106, 13);
             this.lblResponse.TabIndex = 3;
-            this.lblResponse.Text = "Response:";
+            this.lblResponse.Text = "Copilot\'s explanation:";
             this.lblResponse.Visible = false;
             // 
             // textGPTResponse
@@ -117,6 +117,7 @@ namespace Kbg.NppPluginNET
             this.KeyPreview = true;
             this.Name = "frmMyDlg";
             this.Text = "frmMyDlg";
+            this.Load += new System.EventHandler(this.frmMyDlg_Load);
             this.GotFocus += new System.EventHandler(this.frmMyDlg_GetFocus);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmMyDlg_KeyDown);
             this.ResumeLayout(false);

@@ -48,7 +48,7 @@ namespace Kbg.NppPluginNET
             someSetting = (Win32.GetPrivateProfileInt("SomeSection", "SomeKey", 0, iniFilePath) != 0);
 
             PluginBase.SetCommand(0, "Sean's Menu Command", myMenuFunction);
-            PluginBase.SetCommand(1, "Open Copilot", myDockableDialog, new ShortcutKey(true, true, false, Keys.Space)); idMyDlg = 1;
+            PluginBase.SetCommand(1, "Open Copilot", myDockableDialog, new ShortcutKey(true, true, false, Keys.C)); idMyDlg = 1;
             PluginBase.SetCommand(2, "Settings", SettingsDialog); idSettingsDlg = 2;
         }
 
@@ -136,7 +136,7 @@ namespace Kbg.NppPluginNET
 
                 NppTbData _nppTbData = new NppTbData();
                 _nppTbData.hClient = frmMyDlg.Handle;
-                _nppTbData.pszName = "Refactor Copilot";
+                _nppTbData.pszName = "Copilot";
                 _nppTbData.dlgID = idMyDlg;
                 _nppTbData.uMask = NppTbMsg.DWS_DF_CONT_RIGHT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR;
                 _nppTbData.hIconTab = (uint)tbIcon.Handle;

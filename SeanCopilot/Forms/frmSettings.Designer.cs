@@ -35,17 +35,17 @@
             this.txtApiKey = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.txtGptModel = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnConfigurationReset = new System.Windows.Forms.Button();
             this.btnConfigurationSave = new System.Windows.Forms.Button();
+            this.cmbGptModel = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtInstructions
             // 
             this.txtInstructions.AcceptsReturn = true;
-            this.txtInstructions.Location = new System.Drawing.Point(12, 29);
+            this.txtInstructions.Location = new System.Drawing.Point(12, 157);
             this.txtInstructions.Multiline = true;
             this.txtInstructions.Name = "txtInstructions";
             this.txtInstructions.Size = new System.Drawing.Size(300, 300);
@@ -53,7 +53,7 @@
             // 
             // btnInstructionSave
             // 
-            this.btnInstructionSave.Location = new System.Drawing.Point(15, 335);
+            this.btnInstructionSave.Location = new System.Drawing.Point(15, 463);
             this.btnInstructionSave.Name = "btnInstructionSave";
             this.btnInstructionSave.Size = new System.Drawing.Size(140, 23);
             this.btnInstructionSave.TabIndex = 1;
@@ -63,18 +63,18 @@
             // 
             // btnInstructionReset
             // 
-            this.btnInstructionReset.Location = new System.Drawing.Point(169, 335);
+            this.btnInstructionReset.Location = new System.Drawing.Point(169, 463);
             this.btnInstructionReset.Name = "btnInstructionReset";
             this.btnInstructionReset.Size = new System.Drawing.Size(140, 23);
             this.btnInstructionReset.TabIndex = 2;
-            this.btnInstructionReset.Text = "Reset";
+            this.btnInstructionReset.Text = "Reload";
             this.btnInstructionReset.UseVisualStyleBackColor = true;
             this.btnInstructionReset.Click += new System.EventHandler(this.btnInstructionReset_Click);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 13);
+            this.label1.Location = new System.Drawing.Point(12, 141);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(98, 13);
             this.label1.TabIndex = 3;
@@ -82,7 +82,7 @@
             // 
             // txtApiKey
             // 
-            this.txtApiKey.Location = new System.Drawing.Point(87, 400);
+            this.txtApiKey.Location = new System.Drawing.Point(87, 35);
             this.txtApiKey.Name = "txtApiKey";
             this.txtApiKey.Size = new System.Drawing.Size(218, 20);
             this.txtApiKey.TabIndex = 4;
@@ -105,21 +105,15 @@
             this.label3.TabIndex = 7;
             this.label3.Text = "GPT Model:";
             // 
-            // txtGptModel
-            // 
-            this.txtGptModel.Location = new System.Drawing.Point(87, 426);
-            this.txtGptModel.Name = "txtGptModel";
-            this.txtGptModel.Size = new System.Drawing.Size(218, 20);
-            this.txtGptModel.TabIndex = 6;
-            // 
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
+            this.groupBox1.Controls.Add(this.cmbGptModel);
             this.groupBox1.Controls.Add(this.btnConfigurationReset);
             this.groupBox1.Controls.Add(this.btnConfigurationSave);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Location = new System.Drawing.Point(12, 377);
+            this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(299, 118);
             this.groupBox1.TabIndex = 8;
@@ -132,7 +126,7 @@
             this.btnConfigurationReset.Name = "btnConfigurationReset";
             this.btnConfigurationReset.Size = new System.Drawing.Size(136, 23);
             this.btnConfigurationReset.TabIndex = 10;
-            this.btnConfigurationReset.Text = "Reset";
+            this.btnConfigurationReset.Text = "Reload";
             this.btnConfigurationReset.UseVisualStyleBackColor = true;
             this.btnConfigurationReset.Click += new System.EventHandler(this.btnConfigurationReset_Click);
             // 
@@ -146,12 +140,20 @@
             this.btnConfigurationSave.UseVisualStyleBackColor = true;
             this.btnConfigurationSave.Click += new System.EventHandler(this.btnConfigurationSave_Click);
             // 
+            // cmbGptModel
+            // 
+            this.cmbGptModel.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.cmbGptModel.FormattingEnabled = true;
+            this.cmbGptModel.Location = new System.Drawing.Point(75, 49);
+            this.cmbGptModel.Name = "cmbGptModel";
+            this.cmbGptModel.Size = new System.Drawing.Size(218, 21);
+            this.cmbGptModel.TabIndex = 9;
+            // 
             // frmSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(328, 570);
-            this.Controls.Add(this.txtGptModel);
+            this.ClientSize = new System.Drawing.Size(333, 681);
             this.Controls.Add(this.txtApiKey);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnInstructionReset);
@@ -176,9 +178,9 @@
         private System.Windows.Forms.TextBox txtApiKey;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox txtGptModel;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button btnConfigurationReset;
         private System.Windows.Forms.Button btnConfigurationSave;
+        private System.Windows.Forms.ComboBox cmbGptModel;
     }
 }
