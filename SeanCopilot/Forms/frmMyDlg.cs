@@ -6,16 +6,22 @@ using System.Net;
 using System.Web.Script.Serialization;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace Kbg.NppPluginNET
 {
 
     public partial class frmMyDlg : Form
     {
+        private OpenAI openAI;
+
         public frmMyDlg()
         {
             InitializeComponent();
             CheckAPIKey();
+
+            openAI = new OpenAI();
         }
 
         private void frmMyDlg_Load(object sender, EventArgs e)
@@ -29,41 +35,10 @@ namespace Kbg.NppPluginNET
             textBox1.Focus();
         }
 
-        private void CheckAPIKey()
-        {
-            bool enabledForm = Main.configManager.GetConfigValue("api_key").Length > 0;
-            string noApiKeyString = "No API key found!";
-
-            if (!enabledForm)
-            {
-                textGPTResponse.Text = string.Empty;
-                textGPTResponse.Hide();
-                lblResponse.Hide();
-                textBox1.Text = noApiKeyString;
-            }
-            else
-            {
-                if(textBox1.Text == noApiKeyString)
-                {
-                    textBox1.Text = string.Empty;
-                }
-
-                if (textGPTResponse.Text.Length > 0)
-                {
-                    lblResponse.Show();
-                    textGPTResponse.Show();
-                }
-            }
-
-            textBox1.Enabled = enabledForm;
-            refactorButton.Enabled = enabledForm;
-            clearButton.Enabled = enabledForm;
-        }
-
         private void frmMyDlg_KeyDown(object sender, KeyEventArgs e)
         {
             // Check if the pressed key is the "Return" key
-            if (e.KeyCode == Keys.Return)
+            if (e.KeyCode == Keys.Return && enterToRunCheckbox.Checked)
             {
                 // Activate the button click event or call your function here
                 refactorButton.PerformClick();
@@ -71,92 +46,105 @@ namespace Kbg.NppPluginNET
         }
 
 
-        public string[] GetGPTResponse(string prompt)
-        {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            var request = (HttpWebRequest)WebRequest.Create("https://api.openai.com/v1/chat/completions");
-            request.Method = "POST";
-            request.ContentType = "application/json";
-            request.Headers.Add("Authorization", "Bearer " + Main.configManager.GetConfigValue("api_key"));
-            request.UseDefaultCredentials = false;
-
-            var messages = new List<Dictionary<string, string>>
-            {
-                new Dictionary<string, string> { { "role", "system" }, { "content", Main.GetInstructions() } },
-                new Dictionary<string, string> { { "role", "user" }, { "content", prompt } }
-            };
-
-            var payload = new Dictionary<string, object>
-            {
-                { "model", Main.configManager.GetConfigValue("gpt_model") },
-                { "messages", messages }
-            };
-
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            string postData = serializer.Serialize(payload);
-
-            using (var streamWriter = new StreamWriter(request.GetRequestStream()))
-            {
-                streamWriter.Write(postData);
-            }
-
-            try
-            {
-                var httpResponse = (HttpWebResponse)request.GetResponse();
-                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-                {
-                    var result = streamReader.ReadToEnd();
-                    Dictionary<string, object> parsedResponse = serializer.Deserialize<Dictionary<string, object>>(result);
-                    var choices = (System.Collections.ArrayList)parsedResponse["choices"];
-                    Dictionary<string, object> choice = (Dictionary<string, object>)choices[0];
-                    Dictionary<string, object> message = (Dictionary<string, object>)choice["message"];
-                    try
-                    {
-                        Dictionary<string, object> answers = serializer.Deserialize<Dictionary<string, object>>(message["content"].ToString());
-                        return new string[] { answers["code"].ToString(), answers["reason"].ToString() };
-                    }
-                    catch(Exception e)
-                    {
-                        return new string[] { string.Empty, e.Message + "\r\nCannot refactor, but my response is:\r\n" + message["content"].ToString() };
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                // Handle exception
-                return new string[] { string.Empty, e.Message };
-            }
-        }
-
-
         private void clearButton_Click(object sender, EventArgs e)
         {
+            openAI.ClearHistory();
+
             textBox1.Text = string.Empty;
             textGPTResponse.Text = string.Empty;
+            readThisDocButton.Enabled = true;
+            UpdateHistoryCountOnCheckbox();
+
             lblResponse.Hide();
             textGPTResponse.Hide();
         }
 
         private void refactorButton_Click(object sender, EventArgs e)
         {
-            textGPTResponse.Text = string.Empty;
-
             // get selected text
             var scintilla = new ScintillaGateway(PluginBase.GetCurrentScintilla());
             string selectionText = scintilla.GetSelText();
+
+            SendToGPT(selectionText);
+        }
+
+        private void readThisDocButton_Click(object sender, EventArgs e)
+        {
+            // get selected text
+            var scintilla = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+            string allText = scintilla.GetText(scintilla.GetTextLength());
+            readThisDocButton.Enabled = false;
+
+            SendToGPT(RemoveLineBreaks(allText), false);
+        }
+
+        private void textGPTResponse_TextChanged(object sender, EventArgs e)
+        {
+            UpdateHistoryCountOnCheckbox();
+        }
+
+        private void UpdateHistoryCountOnCheckbox()
+        {
+            string replacement = Convert.ToString(openAI.GetHistoryLength());
+
+            string newText = maintainHistoryCheckbox.Text;
+            if (newText.Contains("(") && newText.Contains(")"))
+            {
+                int openBracketIndex = newText.LastIndexOf('(');
+                int closeBracketIndex = newText.LastIndexOf(')');
+
+                if (openBracketIndex != -1 && closeBracketIndex != -1 && openBracketIndex < closeBracketIndex)
+                {
+                    newText = newText.Substring(0, openBracketIndex + 1) + replacement + newText.Substring(closeBracketIndex);
+                }
+                else
+                {
+                    newText = newText + " (" + replacement + " messages)";
+                }
+            }
+            else
+            {
+                newText = newText + " (" + replacement + " messages)";
+            }
+
+            maintainHistoryCheckbox.Text = newText;
+        }
+
+        private void SendToGPT(string selectionText, bool replaceSelection = true)
+        {
+            Task.Run(() => GetGPTResponse(selectionText, maintainHistoryCheckbox.Checked, replaceSelection));
+
+            lblResponse.Show();
+            textGPTResponse.Show();
+        }
+
+        public static string RemoveLineBreaks(string input)
+        {
+            // Replace line breaks and their surrounding whitespace with empty string
+            return Regex.Replace(input, @"[\t ]*\r?\n[\t ]*", "");
+        }
+
+        private async void GetGPTResponse(string selectionText, bool useHistory, bool replaceSelection)
+        {
             string whitespace = ExtractWhitespace(selectionText);
+
+            // UI updates
+            textGPTResponse.Text = "Working on it...";
+            refactorButton.Enabled = false;
 
             // make the GPT call
             string prompt = textBox1.Text + "\r\n" + selectionText;
-            string[] response = GetGPTResponse(prompt);
+            string[] response = await openAI.GetGPTResponse(prompt, useHistory);
 
             // replace the selected text if necessary
-            if (response[0].Length > 0)
+            if (response[0].Length > 0 && replaceSelection)
+            {
+                var scintilla = new ScintillaGateway(PluginBase.GetCurrentScintilla());
                 scintilla.ReplaceSel(InsertWhitespace(response[0], whitespace));
+            }
 
-            // updated the UI
-            lblResponse.Show();
-            textGPTResponse.Show();
+            // update the UI
+            refactorButton.Enabled = true;
             textGPTResponse.Text = response[1];
         }
 
@@ -189,6 +177,41 @@ namespace Kbg.NppPluginNET
                 whitespace = selectionText.Length > 0 ? selectionText.Substring(0, selectionText.Length - selectionText.TrimStart().Length) : null;
             }
             return whitespace;
+        }
+
+        private void CheckAPIKey()
+        {
+            bool enabledForm = Main.configManager.GetConfigValue("api_key").Length > 0;
+            string noApiKeyString = "No API key found!";
+
+            if (!enabledForm)
+            {
+                textGPTResponse.Text = string.Empty;
+                textGPTResponse.Hide();
+                lblResponse.Hide();
+                textBox1.Text = noApiKeyString;
+
+                readThisDocButton.Enabled = false;
+                refactorButton.Enabled = false;
+            }
+            else
+            {
+                if (textBox1.Text == noApiKeyString)
+                {
+                    textBox1.Text = string.Empty;
+                }
+
+                if (textGPTResponse.Text.Length > 0)
+                {
+                    lblResponse.Show();
+                    textGPTResponse.Show();
+                }
+            }
+
+            textBox1.Enabled = enabledForm;
+            clearButton.Enabled = enabledForm;
+            maintainHistoryCheckbox.Enabled = enabledForm;
+            enterToRunCheckbox.Enabled = enabledForm;
         }
     }
 }

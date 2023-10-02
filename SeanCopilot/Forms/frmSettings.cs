@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -54,43 +55,13 @@ namespace Kbg.NppPluginNET
         private void RefreshGPTModelOptions()
         {
             cmbGptModel.Items.Clear();
-            cmbGptModel.Items.AddRange(GetGPTModels());
+            cmbGptModel.Items.AddRange(OpenAI.GetGPTModels());
         }
 
-
-        public string[] GetGPTModels()
+        private void linkBilling_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            var request = (HttpWebRequest)WebRequest.Create("https://api.openai.com/v1/models");
-            request.Method = "GET";
-            request.ContentType = "application/json";
-            request.Headers.Add("Authorization", "Bearer " + Main.configManager.GetConfigValue("api_key"));
-            request.UseDefaultCredentials = false;
-
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            HashSet<string> models = new HashSet<string>();
-
-            try
-            {
-                var httpResponse = (HttpWebResponse)request.GetResponse();
-                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-                {
-                    var result = streamReader.ReadToEnd();
-                    Dictionary<string, object> parsedResponse = serializer.Deserialize<Dictionary<string, object>>(result);
-                    var data = (System.Collections.ArrayList)parsedResponse["data"];
-                    foreach(object model in data)
-                    {
-                        var fields = (Dictionary<string, object>)model;
-                        models.Add(Convert.ToString(fields["id"]));
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show("Error fetching models from OpenAI: " + e.Message);
-            }
-
-            return models.OrderBy(s => s).ToArray();
+            linkBilling.LinkVisited = true;
+            Process.Start("https://platform.openai.com/account/billing/overview");
         }
     }
 }

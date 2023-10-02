@@ -1,4 +1,7 @@
-﻿namespace Kbg.NppPluginNET
+﻿using System;
+using System.Windows.Forms;
+
+namespace Kbg.NppPluginNET
 {
     partial class frmSettings
     {
@@ -36,24 +39,26 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.linkBilling = new System.Windows.Forms.LinkLabel();
+            this.cmbGptModel = new System.Windows.Forms.ComboBox();
             this.btnConfigurationReset = new System.Windows.Forms.Button();
             this.btnConfigurationSave = new System.Windows.Forms.Button();
-            this.cmbGptModel = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtInstructions
             // 
             this.txtInstructions.AcceptsReturn = true;
-            this.txtInstructions.Location = new System.Drawing.Point(12, 157);
+            this.txtInstructions.Location = new System.Drawing.Point(12, 176);
             this.txtInstructions.Multiline = true;
             this.txtInstructions.Name = "txtInstructions";
-            this.txtInstructions.Size = new System.Drawing.Size(300, 300);
+            this.txtInstructions.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtInstructions.Size = new System.Drawing.Size(300, 395);
             this.txtInstructions.TabIndex = 0;
             // 
             // btnInstructionSave
             // 
-            this.btnInstructionSave.Location = new System.Drawing.Point(15, 463);
+            this.btnInstructionSave.Location = new System.Drawing.Point(15, 577);
             this.btnInstructionSave.Name = "btnInstructionSave";
             this.btnInstructionSave.Size = new System.Drawing.Size(140, 23);
             this.btnInstructionSave.TabIndex = 1;
@@ -63,7 +68,7 @@
             // 
             // btnInstructionReset
             // 
-            this.btnInstructionReset.Location = new System.Drawing.Point(169, 463);
+            this.btnInstructionReset.Location = new System.Drawing.Point(169, 577);
             this.btnInstructionReset.Name = "btnInstructionReset";
             this.btnInstructionReset.Size = new System.Drawing.Size(140, 23);
             this.btnInstructionReset.TabIndex = 2;
@@ -74,7 +79,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 141);
+            this.label1.Location = new System.Drawing.Point(12, 160);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(98, 13);
             this.label1.TabIndex = 3;
@@ -108,6 +113,7 @@
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
+            this.groupBox1.Controls.Add(this.linkBilling);
             this.groupBox1.Controls.Add(this.cmbGptModel);
             this.groupBox1.Controls.Add(this.btnConfigurationReset);
             this.groupBox1.Controls.Add(this.btnConfigurationSave);
@@ -115,30 +121,21 @@
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(299, 118);
+            this.groupBox1.Size = new System.Drawing.Size(299, 132);
             this.groupBox1.TabIndex = 8;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Open AI Configuration:";
             // 
-            // btnConfigurationReset
+            // linkBilling
             // 
-            this.btnConfigurationReset.Location = new System.Drawing.Point(157, 83);
-            this.btnConfigurationReset.Name = "btnConfigurationReset";
-            this.btnConfigurationReset.Size = new System.Drawing.Size(136, 23);
-            this.btnConfigurationReset.TabIndex = 10;
-            this.btnConfigurationReset.Text = "Reload";
-            this.btnConfigurationReset.UseVisualStyleBackColor = true;
-            this.btnConfigurationReset.Click += new System.EventHandler(this.btnConfigurationReset_Click);
-            // 
-            // btnConfigurationSave
-            // 
-            this.btnConfigurationSave.Location = new System.Drawing.Point(6, 83);
-            this.btnConfigurationSave.Name = "btnConfigurationSave";
-            this.btnConfigurationSave.Size = new System.Drawing.Size(137, 23);
-            this.btnConfigurationSave.TabIndex = 9;
-            this.btnConfigurationSave.Text = "Save";
-            this.btnConfigurationSave.UseVisualStyleBackColor = true;
-            this.btnConfigurationSave.Click += new System.EventHandler(this.btnConfigurationSave_Click);
+            this.linkBilling.AutoSize = true;
+            this.linkBilling.Location = new System.Drawing.Point(81, 78);
+            this.linkBilling.Name = "linkBilling";
+            this.linkBilling.Size = new System.Drawing.Size(137, 13);
+            this.linkBilling.TabIndex = 11;
+            this.linkBilling.TabStop = true;
+            this.linkBilling.Text = "Go to OpenAI billing page...";
+            this.linkBilling.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkBilling_LinkClicked);
             // 
             // cmbGptModel
             // 
@@ -148,6 +145,26 @@
             this.cmbGptModel.Name = "cmbGptModel";
             this.cmbGptModel.Size = new System.Drawing.Size(218, 21);
             this.cmbGptModel.TabIndex = 9;
+            // 
+            // btnConfigurationReset
+            // 
+            this.btnConfigurationReset.Location = new System.Drawing.Point(157, 100);
+            this.btnConfigurationReset.Name = "btnConfigurationReset";
+            this.btnConfigurationReset.Size = new System.Drawing.Size(136, 23);
+            this.btnConfigurationReset.TabIndex = 10;
+            this.btnConfigurationReset.Text = "Reload";
+            this.btnConfigurationReset.UseVisualStyleBackColor = true;
+            this.btnConfigurationReset.Click += new System.EventHandler(this.btnConfigurationReset_Click);
+            // 
+            // btnConfigurationSave
+            // 
+            this.btnConfigurationSave.Location = new System.Drawing.Point(6, 100);
+            this.btnConfigurationSave.Name = "btnConfigurationSave";
+            this.btnConfigurationSave.Size = new System.Drawing.Size(137, 23);
+            this.btnConfigurationSave.TabIndex = 9;
+            this.btnConfigurationSave.Text = "Save";
+            this.btnConfigurationSave.UseVisualStyleBackColor = true;
+            this.btnConfigurationSave.Click += new System.EventHandler(this.btnConfigurationSave_Click);
             // 
             // frmSettings
             // 
@@ -182,5 +199,6 @@
         private System.Windows.Forms.Button btnConfigurationReset;
         private System.Windows.Forms.Button btnConfigurationSave;
         private System.Windows.Forms.ComboBox cmbGptModel;
+        private System.Windows.Forms.LinkLabel linkBilling;
     }
 }
