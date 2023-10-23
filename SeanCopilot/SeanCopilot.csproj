@@ -85,11 +85,11 @@
     <Compile Include="OpenAI.cs" />
     <Compile Include="PluginInfrastructure\ClikeStringArray.cs" />
     <Compile Include="PluginInfrastructure\DllExport\DllExportAttribute.cs" />
-    <Compile Include="Forms\frmMyDlg.cs">
+    <Compile Include="Forms\frmCopilotDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmMyDlg.Designer.cs">
-      <DependentUpon>frmMyDlg.cs</DependentUpon>
+    <Compile Include="Forms\frmCopilotDlg.Designer.cs">
+      <DependentUpon>frmCopilotDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="PluginInfrastructure\Win32.cs" />
     <Compile Include="Main.cs" />
@@ -114,8 +114,8 @@
     <Compile Include="PluginInfrastructure\UnmanagedExports.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Forms\frmMyDlg.resx">
-      <DependentUpon>frmMyDlg.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\frmCopilotDlg.resx">
+      <DependentUpon>frmCopilotDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmSettings.resx">
       <DependentUpon>frmSettings.cs</DependentUpon>

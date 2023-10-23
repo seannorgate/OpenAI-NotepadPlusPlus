@@ -71,12 +71,13 @@ namespace Kbg.NppPluginNET
                     }
                     catch (Exception ex)
                     {
-                        sAIInstructions = $"An error occurred while reading the file: {ex.Message}";
+                        sAIInstructions = $"An error occurred while reading from {filePath}: {ex.Message}";
                     }
                 }
                 else
                 {
-                    sAIInstructions = $"File {filePath} does not exist.";
+                    File.WriteAllText(filePath, ConfigManager.DefaultInstructions());
+                    sAIInstructions = ConfigManager.DefaultInstructions();
                 }
             }
 

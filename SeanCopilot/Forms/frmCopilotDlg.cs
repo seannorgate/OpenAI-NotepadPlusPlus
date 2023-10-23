@@ -24,18 +24,18 @@ namespace Kbg.NppPluginNET
             openAI = new OpenAI();
         }
 
-        private void frmMyDlg_Load(object sender, EventArgs e)
+        private void frmCopilotDlg_Load(object sender, EventArgs e)
         {
             textBox1.Focus();
         }
 
-        private void frmMyDlg_GetFocus(object sender, EventArgs e)
+        private void frmCopilotDlg_GetFocus(object sender, EventArgs e)
         {
             CheckAPIKey();
             textBox1.Focus();
         }
 
-        private void frmMyDlg_KeyDown(object sender, KeyEventArgs e)
+        private void frmCopilotDlg_KeyDown(object sender, KeyEventArgs e)
         {
             // Check if the pressed key is the "Return" key
             if (e.KeyCode == Keys.Return && enterToRunCheckbox.Checked)

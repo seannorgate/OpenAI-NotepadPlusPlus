@@ -158,10 +158,10 @@ namespace Kbg.NppPluginNET
             this.Controls.Add(this.textBox1);
             this.KeyPreview = true;
             this.Name = "frmCopilotDlg";
-            this.Text = "frmMyDlg";
-            this.Load += new System.EventHandler(this.frmMyDlg_Load);
-            this.GotFocus += new System.EventHandler(this.frmMyDlg_GetFocus);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmMyDlg_KeyDown);
+            this.Text = "frmCopilotDlg";
+            this.Load += new System.EventHandler(this.frmCopilotDlg_Load);
+            this.GotFocus += new System.EventHandler(this.frmCopilotDlg_GetFocus);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmCopilotDlg_KeyDown);
             this.ResumeLayout(false);
             this.PerformLayout();
 

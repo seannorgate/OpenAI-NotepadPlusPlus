@@ -1,5 +1,3 @@
-formMyDlg:
-	tick box for 'send selection'
-
-	remember separate history per document?
-	some kind of history viewer or something?
+tick box for 'send selection'
+remember separate history per document
+some kind of history viewer or something
