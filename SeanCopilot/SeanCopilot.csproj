@@ -106,12 +106,12 @@
     <Compile Include="PluginInfrastructure\Preference_h.cs" />
     <Compile Include="PluginInfrastructure\Resource_h.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PluginInfrastructure\UnmanagedExports.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="PluginInfrastructure\UnmanagedExports.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Forms\frmCopilotDlg.resx">
@@ -122,9 +122,27 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\openai_settings.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\openai.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\openai.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\openai_bmp.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\openai_settings.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\openai_settings_bmp.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildProjectDirectory)\PluginInfrastructure\DllExport\NppPlugin.DllExport.targets" />

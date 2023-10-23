@@ -19,8 +19,10 @@ namespace Kbg.NppPluginNET
         static frmSettings frmSettings = null;
         static int idCopilotDlg = -1;
         static int idSettingsDlg = -1;
-        static Bitmap tbBmp = SeanCopilot.Properties.Resources.star;
-        static Bitmap tbBmp_tbTab = SeanCopilot.Properties.Resources.star_bmp;
+        //static Bitmap tbBmp = SeanCopilot.Properties.Resources.star;
+        //static Bitmap tbBmp_tbTab = SeanCopilot.Properties.Resources.star_bmp;
+        static Bitmap bmOpenAi = SeanCopilot.Properties.Resources.openai;
+        static Bitmap bmSettings = SeanCopilot.Properties.Resources.openai_settings;
         static Icon tbIcon = null;
         private static string sAIInstructions = null;
 
@@ -47,8 +49,8 @@ namespace Kbg.NppPluginNET
             if (!Directory.Exists(iniFilePath)) Directory.CreateDirectory(iniFilePath);
             iniFilePath = Path.Combine(iniFilePath, PluginName + ".ini");
             someSetting = (Win32.GetPrivateProfileInt("SomeSection", "SomeKey", 0, iniFilePath) != 0);
-
-            PluginBase.SetCommand(0, "Sean's Menu Command", myMenuFunction);
+            
+            PluginBase.SetCommand(0, "About", aboutMessage);
             PluginBase.SetCommand(1, "Open Copilot", dockedCopilot, new ShortcutKey(true, true, false, Keys.C)); idCopilotDlg = 1;
             PluginBase.SetCommand(2, "Copilot Settings", SettingsDialog); idSettingsDlg = 2;
         }
@@ -102,10 +104,18 @@ namespace Kbg.NppPluginNET
         internal static void SetToolBarIcon()
         {
             toolbarIcons tbIcons = new toolbarIcons();
-            tbIcons.hToolbarBmp = tbBmp.GetHbitmap();
+
+            // Copilot button
+            tbIcons.hToolbarBmp = bmOpenAi.GetHbitmap();
             IntPtr pTbIcons = Marshal.AllocHGlobal(Marshal.SizeOf(tbIcons));
             Marshal.StructureToPtr(tbIcons, pTbIcons, false);
             Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_ADDTOOLBARICON, PluginBase._funcItems.Items[idCopilotDlg]._cmdID, pTbIcons);
+            Marshal.FreeHGlobal(pTbIcons);
+
+            // Settings button
+            tbIcons.hToolbarBmp = bmSettings.GetHbitmap();
+            pTbIcons = Marshal.AllocHGlobal(Marshal.SizeOf(tbIcons));
+            Marshal.StructureToPtr(tbIcons, pTbIcons, false);
             Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_ADDTOOLBARICON, PluginBase._funcItems.Items[idSettingsDlg]._cmdID, pTbIcons);
             Marshal.FreeHGlobal(pTbIcons);
         }
@@ -116,13 +126,9 @@ namespace Kbg.NppPluginNET
         }
 
 
-        internal static void myMenuFunction()
+        internal static void aboutMessage()
         {
-            var scintilla = new ScintillaGateway(PluginBase.GetCurrentScintilla());
-            if (scintilla.GetSelectionLength() != 0)
-                MessageBox.Show("Hello Sean, you are super cool! model is " + configManager.GetConfigValue("gpt_model"));
-            else
-                MessageBox.Show(scintilla.GetSelText());
+            MessageBox.Show("This plugin was made by Sean Norgate in 2023.\r\nv1.0");
         }
 
         internal static void dockedCopilot()
@@ -134,13 +140,13 @@ namespace Kbg.NppPluginNET
                 using (Bitmap newBmp = new Bitmap(16, 16))
                 {
                     Graphics g = Graphics.FromImage(newBmp);
-                    ColorMap[] colorMap = new ColorMap[1];
+                    /*ColorMap[] colorMap = new ColorMap[1];
                     colorMap[0] = new ColorMap();
                     colorMap[0].OldColor = Color.Fuchsia;
                     colorMap[0].NewColor = Color.FromKnownColor(KnownColor.ButtonFace);
                     ImageAttributes attr = new ImageAttributes();
-                    attr.SetRemapTable(colorMap);
-                    g.DrawImage(tbBmp_tbTab, new Rectangle(0, 0, 16, 16), 0, 0, 16, 16, GraphicsUnit.Pixel, attr);
+                    attr.SetRemapTable(colorMap);*/
+                    g.DrawImage(bmOpenAi, new Rectangle(0, 0, 16, 16), 0, 0, 16, 16, GraphicsUnit.Pixel);
                     tbIcon = Icon.FromHandle(newBmp.GetHicon());
                 }
 
@@ -171,13 +177,7 @@ namespace Kbg.NppPluginNET
                 using (Bitmap newBmp = new Bitmap(16, 16))
                 {
                     Graphics g = Graphics.FromImage(newBmp);
-                    ColorMap[] colorMap = new ColorMap[1];
-                    colorMap[0] = new ColorMap();
-                    colorMap[0].OldColor = Color.Fuchsia;
-                    colorMap[0].NewColor = Color.FromKnownColor(KnownColor.ButtonFace);
-                    ImageAttributes attr = new ImageAttributes();
-                    attr.SetRemapTable(colorMap);
-                    g.DrawImage(tbBmp_tbTab, new Rectangle(0, 0, 16, 16), 0, 0, 16, 16, GraphicsUnit.Pixel, attr);
+                    g.DrawImage(bmSettings, new Rectangle(0, 0, 16, 16), 0, 0, 16, 16, GraphicsUnit.Pixel);
                     tbIcon = Icon.FromHandle(newBmp.GetHicon());
                 }
 
