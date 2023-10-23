@@ -2,7 +2,7 @@
 
 namespace Kbg.NppPluginNET
 {
-    partial class frmMyDlg
+    partial class frmCopilotDlg
     {
         /// <summary>
         /// Required designer variable.
@@ -142,7 +142,7 @@ namespace Kbg.NppPluginNET
             this.enterToRunCheckbox.Text = "Press enter to run";
             this.enterToRunCheckbox.UseVisualStyleBackColor = true;
             // 
-            // frmMyDlg
+            // frmCopilotDlg
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -157,7 +157,7 @@ namespace Kbg.NppPluginNET
             this.Controls.Add(this.textGPTResponse);
             this.Controls.Add(this.textBox1);
             this.KeyPreview = true;
-            this.Name = "frmMyDlg";
+            this.Name = "frmCopilotDlg";
             this.Text = "frmMyDlg";
             this.Load += new System.EventHandler(this.frmMyDlg_Load);
             this.GotFocus += new System.EventHandler(this.frmMyDlg_GetFocus);

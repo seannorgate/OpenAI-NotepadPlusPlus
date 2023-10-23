@@ -12,11 +12,11 @@ using System.Text.RegularExpressions;
 namespace Kbg.NppPluginNET
 {
 
-    public partial class frmMyDlg : Form
+    public partial class frmCopilotDlg : Form
     {
         private OpenAI openAI;
 
-        public frmMyDlg()
+        public frmCopilotDlg()
         {
             InitializeComponent();
             CheckAPIKey();
@@ -134,7 +134,7 @@ namespace Kbg.NppPluginNET
 
             // make the GPT call
             string prompt = textBox1.Text + "\r\n" + selectionText;
-            string[] response = await openAI.GetGPTResponse(prompt, useHistory);
+            string[] response = await openAI.RunGPTFunction(prompt, useHistory);
 
             // replace the selected text if necessary
             if (response[0].Length > 0 && replaceSelection)

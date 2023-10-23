@@ -15,13 +15,14 @@ namespace Kbg.NppPluginNET
         public static ConfigManager configManager = null;
         static string iniFilePath = null;
         static bool someSetting = false;
-        static frmMyDlg frmMyDlg = null;
+        static frmCopilotDlg copilotDlg = null;
         static frmSettings frmSettings = null;
-        static int idMyDlg = -1;
+        static int idCopilotDlg = -1;
         static int idSettingsDlg = -1;
         static Bitmap tbBmp = SeanCopilot.Properties.Resources.star;
         static Bitmap tbBmp_tbTab = SeanCopilot.Properties.Resources.star_bmp;
         static Icon tbIcon = null;
+        private static string sAIInstructions = null;
 
 
         public static void OnNotification(ScNotification notification)
@@ -48,8 +49,8 @@ namespace Kbg.NppPluginNET
             someSetting = (Win32.GetPrivateProfileInt("SomeSection", "SomeKey", 0, iniFilePath) != 0);
 
             PluginBase.SetCommand(0, "Sean's Menu Command", myMenuFunction);
-            PluginBase.SetCommand(1, "Open Copilot", myDockableDialog, new ShortcutKey(true, true, false, Keys.C)); idMyDlg = 1;
-            PluginBase.SetCommand(2, "Settings", SettingsDialog); idSettingsDlg = 2;
+            PluginBase.SetCommand(1, "Open Copilot", dockedCopilot, new ShortcutKey(true, true, false, Keys.C)); idCopilotDlg = 1;
+            PluginBase.SetCommand(2, "Copilot Settings", SettingsDialog); idSettingsDlg = 2;
         }
 
         private static void GetConfigurations()
@@ -59,22 +60,27 @@ namespace Kbg.NppPluginNET
 
         public static string GetInstructions()
         {
-            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configManager.GetConfigValue("instructions_path"));
-            if (File.Exists(filePath))
+            if (sAIInstructions == null)
             {
-                try
+                string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configManager.GetConfigValue("instructions_path"));
+                if (File.Exists(filePath))
                 {
-                    return File.ReadAllText(filePath);
+                    try
+                    {
+                        sAIInstructions = File.ReadAllText(filePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        sAIInstructions = $"An error occurred while reading the file: {ex.Message}";
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    return $"An error occurred while reading the file: {ex.Message}";
+                    sAIInstructions = $"File {filePath} does not exist.";
                 }
             }
-            else
-            {
-                return $"File {filePath} does not exist.";
-            }
+
+            return sAIInstructions;
         }
 
         public static void SetInstructions(string newInstruction)
@@ -87,6 +93,9 @@ namespace Kbg.NppPluginNET
             {
                 MessageBox.Show($"An error occurred while saving the file: {ex.Message}");
             }
+
+            sAIInstructions = null;
+            GetInstructions();
         }
 
         internal static void SetToolBarIcon()
@@ -95,7 +104,7 @@ namespace Kbg.NppPluginNET
             tbIcons.hToolbarBmp = tbBmp.GetHbitmap();
             IntPtr pTbIcons = Marshal.AllocHGlobal(Marshal.SizeOf(tbIcons));
             Marshal.StructureToPtr(tbIcons, pTbIcons, false);
-            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_ADDTOOLBARICON, PluginBase._funcItems.Items[idMyDlg]._cmdID, pTbIcons);
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_ADDTOOLBARICON, PluginBase._funcItems.Items[idCopilotDlg]._cmdID, pTbIcons);
             Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_ADDTOOLBARICON, PluginBase._funcItems.Items[idSettingsDlg]._cmdID, pTbIcons);
             Marshal.FreeHGlobal(pTbIcons);
         }
@@ -115,11 +124,11 @@ namespace Kbg.NppPluginNET
                 MessageBox.Show(scintilla.GetSelText());
         }
 
-        internal static void myDockableDialog()
+        internal static void dockedCopilot()
         {
-            if (frmMyDlg == null)
+            if (copilotDlg == null)
             {
-                frmMyDlg = new frmMyDlg();
+                copilotDlg = new frmCopilotDlg();
 
                 using (Bitmap newBmp = new Bitmap(16, 16))
                 {
@@ -135,9 +144,9 @@ namespace Kbg.NppPluginNET
                 }
 
                 NppTbData _nppTbData = new NppTbData();
-                _nppTbData.hClient = frmMyDlg.Handle;
+                _nppTbData.hClient = copilotDlg.Handle;
                 _nppTbData.pszName = "Copilot";
-                _nppTbData.dlgID = idMyDlg;
+                _nppTbData.dlgID = idCopilotDlg;
                 _nppTbData.uMask = NppTbMsg.DWS_DF_CONT_RIGHT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR;
                 _nppTbData.hIconTab = (uint)tbIcon.Handle;
                 _nppTbData.pszModuleName = PluginName;
@@ -148,7 +157,7 @@ namespace Kbg.NppPluginNET
             }
             else
             {
-                Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_DMMSHOW, 0, frmMyDlg.Handle);
+                Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_DMMSHOW, 0, copilotDlg.Handle);
             }
         }
 
@@ -161,13 +170,10 @@ namespace Kbg.NppPluginNET
                 using (Bitmap newBmp = new Bitmap(16, 16))
                 {
                     Graphics g = Graphics.FromImage(newBmp);
-                    ColorMap[] colorMap = new ColorMap[2];
+                    ColorMap[] colorMap = new ColorMap[1];
                     colorMap[0] = new ColorMap();
                     colorMap[0].OldColor = Color.Fuchsia;
                     colorMap[0].NewColor = Color.FromKnownColor(KnownColor.ButtonFace);
-                    colorMap[1] = new ColorMap();
-                    colorMap[1].OldColor = Color.Red;
-                    colorMap[1].NewColor = Color.Green;
                     ImageAttributes attr = new ImageAttributes();
                     attr.SetRemapTable(colorMap);
                     g.DrawImage(tbBmp_tbTab, new Rectangle(0, 0, 16, 16), 0, 0, 16, 16, GraphicsUnit.Pixel, attr);
