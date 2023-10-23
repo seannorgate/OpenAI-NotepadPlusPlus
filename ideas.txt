@@ -1,9 +1,5 @@
 formMyDlg:
 	tick box for 'send selection'
 
-	button for 'read document'
-	tick box for 'remember history'
 	remember separate history per document?
-	button for 'clear history'
 	some kind of history viewer or something?
-	option to send request as a one-off
