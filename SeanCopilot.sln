@@ -8,6 +8,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7F03DFD9-2B39-4281-A5DC-E8A038A158FC}"
 	ProjectSection(SolutionItems) = preProject
 		ideas.txt = ideas.txt
+		openai.png = openai.png
+		openai_settings.png = openai_settings.png
 	EndProjectSection
 EndProject
 Global
