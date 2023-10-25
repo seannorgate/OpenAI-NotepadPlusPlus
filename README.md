@@ -5,6 +5,10 @@ Based on the plugin template found here: https://github.com/kbilsted/NotepadPlus
 
 This plugin may have bugs - it was written in a short period of time without much polishing! I use it all the time though and it does a great job helping me write complex (but easy to explain) code fast! I recommend using GPT-4 for doing more complex/larger coding tasks.
 
+# Quick Install
+1. Grab the DLL from SeanCopilot/bin/Release
+2. Put into your Notepad++ plugins folder (Should look something like C:/Program Files (x86)/Notepad++/plugins/SeanCopilot/SeanCopilot.dll)
+Note: 32-bit version also available, but relatively untested.
 
 # How to use
 1. Fill in your API key in the settings page and click Save.
